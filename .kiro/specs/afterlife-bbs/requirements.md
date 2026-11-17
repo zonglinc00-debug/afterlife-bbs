@@ -210,6 +210,65 @@ post mentions the other community.
 - **Accept:** `node tests/checks.mjs` exits 0, including the seed checks;
   `bash tests/smoke.sh` checks both seed files return 200.
 
+## 12. Red-team round 1 fixes (2026-11-17)
+
+Why: an outside AI judge (Duck.ai, free, no login) reviewed the live demo
+and found the pitch over-claimed in five places: the "community" is one
+browser's data, Kiro's contribution was invisible, the daily digest was a
+promise with no feature, the matcher was unexplained, and the two demo
+boards read as one template. These requirements close those gaps honestly —
+no backend is added; local-first is stated as the design, not hidden.
+
+### REQ-29 — Today's digest is a real view
+A digest page (`#/digest`, linked from the top nav and the home lede)
+computes, from real data, what happened on the active board today: new
+notes today, help requests with no reply yet, and today's notes that
+received a candle. Nothing is hard-coded.
+- **Accept:** `buildDigest()` property checks pass (today filtering by
+  local date, unanswered requests, warmed notes); opening `#/digest` in a
+  browser shows the three sections with real posts; with nothing new today
+  the page says so plainly ("No new notes today yet") instead of showing
+  stale or invented content.
+
+### REQ-30 — Honest local-first disclosure
+Every place the app could imply shared or server behaviour says, in plain
+words, that it is local to this browser: the kit form and its button, the
+candle note, the curfew banner and notes, the house rules, and the reset
+confirmation (which names the community and says user notes are deleted).
+- **Accept:** visual check asserts the kit copy contains "only in this
+  browser"; the candle note and curfew banner contain "this browser";
+  the reset confirm names the community and the deletion.
+
+### REQ-31 — Built with Kiro, in the app
+The home page has a "Built with Kiro" section naming the real artifacts
+(specs, steering, hooks, custom agent, Kiro CLI 3.4.0) and tracing one
+feature end to end: REQ-18 → `findHelpers()` in `app.js` → the match card
+→ property checks in `tests/checks.mjs` → `.kiro/agents/seance-matcher.md`.
+It states plainly that no MCP servers were used. Only claims verifiable
+from the repo itself are made.
+- **Accept:** the section renders on the home page; every file it names
+  exists in the repo; the trace's requirement, function, and test all
+  exist and pass.
+
+### REQ-32 — Séance matching is explained in the UI
+Both the Séance Circle help box and the match card state the matching
+rule in one sentence: neighbours who posted an offer in the same
+category, one entry per neighbour, newest offer first; requests never
+match requests; all on-device.
+- **Accept:** the match card text contains the rule; posting a request
+  still surfaces the same helpers as before (REQ-18 checks pass).
+
+### REQ-33 — Marlowe House reads as a building, not a copy
+The two demo communities share the five-board template set (one kit, one
+template — that is the product), but their words differ: every Marlowe
+board tagline is building-flavoured (lifts, lobby, flat to flat), and the
+seed posts are building topics. A full per-community board set (different
+board ids per community) is out of scope: the seed checks enforce the
+five template ids, and changing that is a rework, not a copy fix.
+- **Accept:** `data/seed-marlowe.json` board taglines all differ from
+  Hollow Creek's; the seed checks still pass; the limitation is recorded
+  in `hidden_files/redteam-round1.md`.
+
 ## 11. Tests
 
 ### REQ-24 — Automated checks

@@ -46,6 +46,19 @@ replaced by the content lane's `seed-posts.json` via `data/seed.json`.
 - [x] Specs updated: REQ-25–REQ-28 (communities & kit); fixed stale REQ-03/REQ-18 acceptance text
 - [x] Visual check in a real headless browser (see Verification below)
 
+## Phase 3 — red-team round 1 fixes (2026-11-17, done)
+
+Why: an outside AI judge reviewed the live demo and found the pitch
+over-claimed in five places. All fixes are honest labelling or real
+features — no backend was added; local-first is stated as the design.
+
+- [x] Today's digest (`#/digest`): real, computed from the active board's posts — new today, unanswered requests (max 5), today's notes that received a candle (newest first, never ranked by count — candles are never a score, steering/product.md §3); empty days say so plainly
+- [x] Honest local-first disclosure: kit form + button ("Open my board — in this browser"), candle note ("One candle per browser per post"), curfew banner/notes ("enforced in this browser only"), house rules, reset confirm names the community and the deletion
+- [x] "Built with Kiro" section on the home page: real artifacts only (specs, steering, hooks, agent, Kiro CLI 3.4.0), REQ-18 → `findHelpers()` → match card → checks → agent file trace, plain statement that no MCP servers were used
+- [x] Séance matching explained in the UI: help box + match card state the rule (same category, one per neighbour, newest offer first; requests never match requests)
+- [x] Marlowe House reads as a building: all five board taglines are building-flavoured (lifts, lobby, flat to flat); full per-community board sets stay out of scope (seed checks enforce the five template ids) — recorded in `hidden_files/redteam-round1.md`
+- [x] Specs updated: REQ-29–REQ-33; `tests/checks.mjs`: 4 digest checks (21 total, all passing); visual check: 11 new assertions (31 total, all passing)
+
 ## Verification (2026-11-17)
 
 ### v1 (as before)
@@ -80,6 +93,26 @@ Visual review found and fixed two real bugs: (a) the typewriter typed the
 reads `data-full`; (b) the post placeholder said "by the oak" (Hollow
 Creek-specific) — now community-neutral. Both have regression assertions in
 the visual check.
+
+### Phase 3 — red-team round 1 fixes (re-run after the fixes)
+
+```text
+$ node tests/checks.mjs
+  21 passed, 0 failed.
+$ bash tests/smoke.sh
+  SMOKE OK — homepage 200, all key files present.
+$ node ../hidden_files/visual-check.mjs   (Playwright + Chrome for Testing 159)
+  31 passed, 0 failed.
+```
+
+Visual check now also covers: the digest view (today's note + warmed note +
+unanswered request, desktop and 390px, no overflow), the matcher explanation
+card, the kit/Kiro honesty copy on the home page, and the curfew banner's
+"browser only" wording. Screenshot: `hidden_files/visual/10-digest-desktop.png`.
+
+Visual review found no new bugs. One known transient: the "Candle lit."
+toast briefly overlaps a card in the digest screenshot — it disappears after
+4 seconds and is not a defect.
 
 Tooling note: `npx playwright install chromium` needed a user confirmation
 the sandbox would not give a subagent, so Chrome came from Google's
