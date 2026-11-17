@@ -212,6 +212,39 @@ export function findHelpers(posts, category, excludePostId = null) {
   return [...byAuthor.values()];
 }
 
+/** Local calendar day as "YYYY-MM-DD" in the browser's timezone. */
+function localDayKey(date) {
+  const d = date instanceof Date ? date : new Date(date);
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+
+/**
+ * Today's digest (pure, local): what happened on the board today, which
+ * help requests are still unanswered, and which of today's notes received
+ * a candle. `now` is injectable for tests.
+ * Returns { dateLabel, today, unanswered, warmed }.
+ * - today: posts created on `now`'s local date, newest first.
+ * - unanswered: request posts with no replies yet, newest first, max 5.
+ * - warmed: today's posts that received at least one candle, newest
+ *   first, max 3. Deliberately NOT ranked by candle count — candles are
+ *   a warm acknowledgement, never a score (see steering/product.md §3).
+ */
+export function buildDigest(posts, now = new Date()) {
+  const stamp = now instanceof Date ? now : new Date(now);
+  const todayKey = localDayKey(stamp);
+  const today = sortPostsDesc(posts.filter((p) => localDayKey(p.createdAt) === todayKey));
+  const unanswered = sortPostsDesc(
+    posts.filter((p) => p.kind === "request" && (p.replies || []).length === 0)
+  ).slice(0, 5);
+  const warmed = today.filter((p) => (p.candles || 0) > 0).slice(0, 3);
+  const dateLabel = stamp.toLocaleDateString(undefined, {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
+  });
+  return { dateLabel, today, unanswered, warmed };
+}
+
 /** Serialise one community (boards + posts) for export. */
 export function exportState(state, community = null) {
   return JSON.stringify(
@@ -482,7 +515,7 @@ if (typeof document !== "undefined") {
 
   // ---------- routing & rendering ----------
   function showView(name) {
-    for (const v of ["home", "board", "post"]) {
+    for (const v of ["home", "board", "post", "digest"]) {
       $(`#view-${v}`).hidden = v !== name;
     }
     $("#main").focus({ preventScroll: true });
@@ -577,7 +610,7 @@ if (typeof document !== "undefined") {
     container.innerHTML = `<h3>🕯️ These neighbours might help you</h3>
       <p>For “${escapeHtml(requestTitle)}” (${escapeHtml(CATEGORY_LABELS[category] || category)}), these neighbours have offered a hand before:</p>
       <ul>${helpers.map((h) => `<li><strong>${escapeHtml(h.author)}</strong> — <a href="#/post/${escapeHtml(h.postId)}">${escapeHtml(h.title)}</a></li>`).join("")}</ul>
-      <p>Matched on your device only — nothing was sent anywhere.</p>`;
+      <p>How this works: the board lists neighbours who posted an offer in the same category — one entry per neighbour, newest offer first. Requests never match requests. All matching happens on your device — nothing was sent anywhere.</p>`;
     container.hidden = false;
   }
 
@@ -658,12 +691,30 @@ if (typeof document !== "undefined") {
     showView("post");
   }
 
+  function renderDigest() {
+    const d = buildDigest(state.posts, new Date());
+    $("#digest-date").textContent = `${d.dateLabel} · ${community.name}`;
+    const item = (p) => `<li class="post-item">
+        <h4><a href="#/post/${escapeHtml(p.id)}">${escapeHtml(p.title)}</a>${p.kind ? `<span class="post-kind">${p.kind === "offer" ? "🕯️ offer" : "🙏 request"} · ${escapeHtml(CATEGORY_LABELS[p.category] || "")}</span>` : ""}</h4>
+        <p class="post-snippet">${escapeHtml(snippet(p.body))}</p>
+        <p class="post-meta">${escapeHtml(p.author)} · ${escapeHtml(fmtDate(p.createdAt))} · <span class="candles">🕯️ ${p.candles || 0}</span> · 💬 ${(p.replies || []).length} repl${(p.replies || []).length === 1 ? "y" : "ies"}</p>
+      </li>`;
+    $("#digest-today-list").innerHTML = d.today.map(item).join("");
+    $("#digest-empty-today").hidden = d.today.length !== 0;
+    $("#digest-unanswered-list").innerHTML = d.unanswered.map(item).join("");
+    $("#digest-empty-unanswered").hidden = d.unanswered.length !== 0;
+    $("#digest-warmed-list").innerHTML = d.warmed.map(item).join("");
+    $("#digest-empty-warmed").hidden = d.warmed.length !== 0;
+    showView("digest");
+  }
+
   function route() {
     const hash = location.hash || "#/";
     const boardMatch = hash.match(/^#\/board\/([\w-]+)$/);
     const postMatch = hash.match(/^#\/post\/([\w-]+)$/);
     if (postMatch) renderPost(postMatch[1]);
     else if (boardMatch) { currentPage = 1; renderBoard(boardMatch[1]); }
+    else if (hash === "#/digest") renderDigest();
     else renderHome();
     updateRestUI();
   }
@@ -896,7 +947,7 @@ if (typeof document !== "undefined") {
       e.target.value = "";
     });
     $("#reset-board").addEventListener("click", () => {
-      if (!window.confirm(`Reset ${community.name} to its original notes? Your own notes on this board will be replaced.`)) return;
+      if (!window.confirm(`Reset ${community.name} to its original notes? This deletes every note and reply you added on this board.`)) return;
       try { localStorage.removeItem(communityDataKey(community.id)); } catch { /* ignore */ }
       lit = {};
       saveLit();

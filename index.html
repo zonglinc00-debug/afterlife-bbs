@@ -53,6 +53,8 @@
     <nav class="top-nav" aria-label="Board navigation">
       <a href="#/" id="nav-home" class="nav-link">⌂ All boards</a>
       <span class="nav-sep" aria-hidden="true">·</span>
+      <a href="#/digest" id="nav-digest" class="nav-link">📰 Today's digest</a>
+      <span class="nav-sep" aria-hidden="true">·</span>
       <button id="nav-export" type="button" class="nav-link nav-btn">⬇ Export board (JSON)</button>
       <span class="nav-sep" aria-hidden="true">·</span>
       <button id="nav-import" type="button" class="nav-link nav-btn">⬆ Import board (JSON)</button>
@@ -62,13 +64,13 @@
 </header>
 
 <div id="rest-banner" class="rest-banner" role="status" hidden>
-  🌙 The board is resting (00:00–06:00 local time). You can read everything, but new posts and replies are paused until morning. The neighbours need their sleep too.
+  🌙 The board is resting (00:00–06:00 local time). You can read everything, but new posts and replies are paused until morning. The neighbours need their sleep too. The rest is a house rule enforced in this browser only — another device, or a changed clock, can post anyway.
 </div>
 
 <main id="main" class="main" tabindex="-1">
   <section id="view-home" class="view" aria-labelledby="home-heading">
     <h2 id="home-heading">Choose your community</h2>
-    <p class="lede">Two demo boards are already open — a small town and one apartment building. Or start your own in five minutes.</p>
+    <p class="lede">Two demo boards are already open — a small town and one apartment building. Or start your own in five minutes. <a href="#/digest">Read today's digest →</a></p>
     <ul id="community-list" class="community-list"></ul>
 
     <h3 id="boards-heading">Boards on <span id="active-community-name">Hollow Creek</span></h3>
@@ -77,7 +79,7 @@
 
     <section class="kit" aria-labelledby="kit-heading">
       <h3 id="kit-heading">🕯️ Start your own board</h3>
-      <p>Any apartment building, dorm, club, class, or small town can open a board in about five minutes. No account, no server, no cost — your board lives in your browser, and you share it with one exported file.</p>
+      <p>Any apartment building, dorm, club, class, or small town can open a board in about five minutes. No account, no server, no cost — your board lives only in this browser. Share it by exporting one file; anyone can open that file with Import.</p>
       <form id="kit-form" class="post-form" novalidate>
         <div class="field">
           <label for="kit-name">Your community's name <span aria-hidden="true">*</span></label>
@@ -97,18 +99,24 @@
           <label class="setting"><input type="checkbox" name="kit-boards" value="lost-and-found" checked> 🧤 Lost &amp; Found</label>
         </fieldset>
         <p id="kit-errors" class="form-errors" role="alert" hidden></p>
-        <button type="submit" class="btn btn-primary">🕯️ Open my board</button>
+        <button type="submit" class="btn btn-primary">🕯️ Open my board — in this browser</button>
       </form>
+    </section>
+
+    <section class="kiro-note" aria-labelledby="kiro-heading">
+      <h3 id="kiro-heading">Built with Kiro</h3>
+      <p>This board was built spec-first in Kiro. The requirements, design, and task list live in <code>.kiro/specs/afterlife-bbs/</code>; <code>.kiro/steering/</code> holds the product and tech rules every change must respect; two hooks run the logic checks on save and the smoke test before commit; and a custom agent defines the Séance matcher. Kiro CLI 3.4.0 is installed on the build machine. No MCP servers were used — the app needs no external data, so there was nothing to connect.</p>
+      <p>One feature, traced end to end — the Séance matcher: REQ-18 in <code>requirements.md</code> → <code>findHelpers()</code> in <code>app.js</code> → the “These neighbours might help you” card → property checks in <code>tests/checks.mjs</code> → agent rules in <code>.kiro/agents/seance-matcher.md</code>. Everything above is inspectable in the repo: <a href="https://github.com/zonglinc00-debug/afterlife-bbs/tree/main/.kiro">github.com/zonglinc00-debug/afterlife-bbs/tree/main/.kiro</a></p>
     </section>
 
     <aside class="house-rules" aria-labelledby="rules-heading">
       <h3 id="rules-heading">House rules</h3>
       <ol>
         <li>Ten posts per page. When you reach the end, the board says so — then go for a walk.</li>
-        <li>One candle per neighbour per post. Light it if a post warmed the room; take it back if you change your mind.</li>
-        <li>From midnight to 6am the board rests. Read all you like; posting waits for morning.</li>
-        <li>Be a neighbour first. No follower counts, no ads, no ranking. Newest first, always.</li>
-        <li>Your board lives in your browser. Export it any time and take it with you.</li>
+        <li>One candle per browser per post — this browser remembers which notes you lit. Light it if a post warmed the room; take it back if you change your mind.</li>
+        <li>From midnight to 6am the board rests. Read all you like; posting waits for morning. The rest is a house rule enforced in this browser only — a shared norm, not a server lock.</li>
+        <li>Be a neighbour first. No follower counts, no ads, no ranking. Newest first, always — and today's digest makes sure a good note doesn't get buried.</li>
+        <li>Your board lives only in your browser — no server, no account. Export it any time and take it with you; anyone can open the file with Import.</li>
       </ol>
     </aside>
   </section>
@@ -119,7 +127,7 @@
     <p id="board-tagline" class="lede"></p>
     <div id="seance-help" class="seance-help" hidden>
       <h3>How the Séance Circle works</h3>
-      <p>Post a request and pick a category. The board looks through past offers from your neighbours and shows you who might be able to help. All matching happens on your own device — nothing leaves this browser.</p>
+      <p>Post a request and pick a category. The board looks through past offers from your neighbours and shows you who might be able to help — neighbours who posted an offer in the same category, one entry per neighbour, newest offer first. All matching happens on your own device — nothing leaves this browser.</p>
     </div>
     <div id="match-card" class="match-card" aria-live="polite" hidden></div>
 
@@ -159,7 +167,7 @@
         </div>
       </div>
       <p id="post-errors" class="form-errors" role="alert" hidden></p>
-      <p id="post-resting-note" class="resting-note" hidden>The board is resting (00:00–06:00). Posting opens again at 6am.</p>
+      <p id="post-resting-note" class="resting-note" hidden>The board is resting (00:00–06:00). Posting opens again at 6am. The rest is enforced in this browser only — a shared norm, not a server lock.</p>
       <button id="post-submit" type="submit" class="btn btn-primary">📌 Pin it to the board</button>
     </form>
 
@@ -182,6 +190,7 @@
       <p id="post-detail-body" class="post-body"></p>
       <p id="post-detail-category" class="post-category" hidden></p>
       <button id="candle-btn" type="button" class="btn candle-btn" aria-pressed="false" aria-label="Light a candle for this post">🕯️ Light a candle (<span id="candle-count">0</span>)</button>
+      <p class="hint">One candle per browser per post — this browser remembers which notes you lit. It is not a count of people.</p>
     </article>
     <h3>Replies</h3>
     <ul id="reply-list" class="reply-list"></ul>
@@ -198,9 +207,30 @@
         <p id="reply-body-hint" class="hint">Required, up to 2000 characters.</p>
       </div>
       <p id="reply-errors" class="form-errors" role="alert" hidden></p>
-      <p id="reply-resting-note" class="resting-note" hidden>The board is resting (00:00–06:00). Replies open again at 6am.</p>
+      <p id="reply-resting-note" class="resting-note" hidden>The board is resting (00:00–06:00). Replies open again at 6am. The rest is enforced in this browser only — a shared norm, not a server lock.</p>
       <button id="reply-submit" type="submit" class="btn btn-primary">↩ Post reply</button>
     </form>
+  </section>
+
+  <section id="view-digest" class="view" aria-labelledby="digest-heading" hidden>
+    <p><a href="#/" class="back-link">← All boards</a></p>
+    <h2 id="digest-heading">📰 Today's digest</h2>
+    <p id="digest-date" class="lede"></p>
+    <p class="lede">One page, once a day. Newest first keeps the board honest — the digest makes sure a good note doesn't get buried just because it arrived early.</p>
+
+    <h3>New today</h3>
+    <ul id="digest-today-list" class="digest-list"></ul>
+    <p id="digest-empty-today" class="empty-note" hidden>No new notes today yet — the board is quiet. Check back tomorrow, or pin the first note of the day.</p>
+
+    <h3>Still waiting for a hand</h3>
+    <p class="lede">Help requests with no reply yet — newest first. Answer one and the board gets warmer.</p>
+    <ul id="digest-unanswered-list" class="digest-list"></ul>
+    <p id="digest-empty-unanswered" class="empty-note" hidden>Every request has a reply. Nothing waiting.</p>
+
+    <h3>Notes that warmed the room today</h3>
+    <p class="lede">Today's notes that received a candle — newest first, never ranked. A candle is a warm acknowledgement, not a score.</p>
+    <ul id="digest-warmed-list" class="digest-list"></ul>
+    <p id="digest-empty-warmed" class="empty-note" hidden>No candles lit today yet.</p>
   </section>
 </main>
 

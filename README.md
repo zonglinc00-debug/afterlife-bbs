@@ -33,7 +33,8 @@ Every board — demo or yours — has the same five boards inside it:
 - **Boards, posts, replies** — newest first, always. Posts and replies persist in `localStorage`.
 - **Light a candle** — a candle instead of a like. One per neighbour per post, per browser; tap again to take it back.
 - **Slow social, enforced by the product** — 10 posts per page, no infinite scroll; when you reach the end the board tells you: *"You have read all the notes on this board. Go for a walk."*
-- **Resting hours** — from **00:00–06:00 local time** the board rests: posting and replying are disabled (the button says so, and explains why), reading still works.
+- **Resting hours** — from **00:00–06:00 local time** the board rests: posting and replying are disabled (the button says so, and explains why), reading still works. The rest is a house rule enforced in this browser only — a shared norm, not a server lock.
+- **Today's digest** — one page, once a day: new notes today, help requests with no reply yet, and today's notes that received a candle (newest first, never ranked). Empty days say so plainly instead of inventing content.
 - **Séance matching** — post a help request in the Séance Circle, pick a category (fix / borrow / ride / company / skill), and the board matches you on-device with neighbours who previously offered that kind of help. Pure frontend, nothing leaves the browser.
 - **Export / import** — download the whole board as one JSON file; import it back (validated, with clear success/failure messages). Your community can pack up and leave any time.
 - **PWA** — installable, works offline. The service worker caches only this site's own static files.
@@ -63,12 +64,14 @@ bash tests/smoke.sh       # starts a server, curls the homepage and key files
 - **Stack:** vanilla HTML/CSS/JS. No framework, no build, no backend, no paid APIs.
 - **Data:** `localStorage`. Each community has its own key (`afterlife-bbs-data-v1:<community-id>`), plus `afterlife-bbs-lit-v1` (which posts this browser has lit), `afterlife-bbs-settings-v1` (display/sound preferences), `afterlife-bbs-community-v1` (which board is open), and `afterlife-bbs-user-communities-v1` (boards opened with the kit). First visit seeds from the demo seed files.
 - **Seed content:** `data/seed.json` (Hollow Creek, 37 posts) and `data/seed-marlowe.json` (The Marlowe House, 28 posts) are the replaceable content files — 65 posts in total across the two demo boards. The app never hard-codes posts; the content team can swap a file and the app picks it up on a fresh browser. (Reset to the seed any time from the footer; reset affects only the board you are on.)
-- **Kiro:** the project is spec-driven. See `.kiro/specs/afterlife-bbs/` (requirements, design, tasks), `.kiro/steering/` (product principles, tech rules), `.kiro/hooks/` (automation), and `.kiro/agents/` (the séance-matcher helper agent).
+- **Kiro:** the project is spec-driven. See `.kiro/specs/afterlife-bbs/` (requirements, design, tasks), `.kiro/steering/` (product principles, tech rules), `.kiro/hooks/` (logic checks on save, smoke test before commit), and `.kiro/agents/` (the séance-matcher helper agent). One feature traced end to end: the Séance matcher — REQ-18 → `findHelpers()` in `app.js` → the "These neighbours might help you" card → property checks in `tests/checks.mjs` → `.kiro/agents/seance-matcher.md`. Kiro CLI 3.4.0 is installed on the build machine. No MCP servers were used: the app needs no external data, so there was nothing to connect. Storage is `localStorage` only — no IndexedDB, no backend.
+- **Built with Kiro, in the app:** the home page has a "Built with Kiro" section with the same trace, so judges can see the Kiro work without opening the repo.
 
 ## Known limitations
 
 - **One device, one board (per community).** Data lives in the browser's `localStorage`; there is no server, so two neighbours on two devices do not see each other's posts unless one exports a JSON file and the other imports it. That is the design, not an oversight — but it is the honest limit of a zero-backend board. Exported files carry the community name, so importing someone else's file opens their board instead of overwriting yours.
-- **Candles are per-browser, not per-person.** "One candle per neighbour" is enforced per browser via `localStorage`; clearing site data resets it.
+- **Candles are per-browser, not per-person.** "One candle per neighbour" is enforced per browser via `localStorage`; clearing site data resets it. The UI says this next to the candle button.
+- **One template board set.** Both demo boards (and every board opened with the kit) share the same five boards; only the words differ per community (Marlowe's board taglines are building-flavoured). Different board sets per community would need a rework of the seed checks, so that stays out of scope.
 - **Seed loads over HTTP.** Opening `index.html` directly with `file://` fails the `fetch("data/seed.json")` call; use the local server (or GitHub Pages).
 - **Service worker needs HTTP(S).** Offline mode works on `localhost` and on GitHub Pages, not on `file://`.
 - **No accounts, no moderation tools, no search.** Deliberately out of scope for the MVP; a shared board would need those before real deployment.
