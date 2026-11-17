@@ -269,6 +269,74 @@ five template ids, and changing that is a rework, not a copy fix.
   Hollow Creek's; the seed checks still pass; the limitation is recorded
   in `hidden_files/redteam-round1.md`.
 
+## 13. Red-team round 2 fixes (2026-11-17)
+
+Why: round 2 found the digest route dead in a returning visitor's
+browser — the new index.html arrived but the old `app.js` was served from
+the service worker cache, because `sw.js` never changed between releases
+and was cache-first for everything. It also found the reset confirmation
+invisible (native `confirm` is auto-dismissed by automation), "New today"
+already empty a day after the seed dates, a blocking intro, and a
+"1 notes" plural bug. These requirements close all of them.
+
+### REQ-34 — Seed dates anchor to the visitor's first visit
+Demo seed posts are fiction dated in the past. On first load of a demo
+community, their dates shift by whole days so the newest seed post lands
+on the visitor's local today, preserving the gaps between posts and
+shifting replies with their posts. Stored copies and imports keep their
+own dates; nothing is invented — the board never creates posts. One
+exception: a stored demo board that is still pure seed content (every
+post id is a seed id, no user post or reply) is re-anchored the same
+way on load, so returning visitors from before this fix also get a
+real "today"; any user content means the stored dates are left alone.
+- **Accept:** `rebaseSeedDates()` property checks pass (newest lands
+  today, gaps preserved, no shift when already today, replies shift too,
+  input never mutated); loading Hollow Creek fresh shows real posts under
+  "New today" in the digest no matter what calendar day it is.
+
+### REQ-35 — Cache-safe service worker updates
+The service worker must never serve a previous release's code to a
+returning visitor while the new page is live: the cache name carries a
+version and old caches are deleted on activate; `sw.js` is registered
+with `updateViaCache: "none"` so update checks always fetch it fresh;
+navigations and scripts are network-first (fresh when online, cache when
+offline) and other same-origin assets stay cache-first; both seed files
+are precached; when a new worker installs while a page is open, a banner
+offers "Reload to get it". Every network fetch in the worker uses
+`cache: "reload"`: a plain fetch still honours the browser HTTP cache,
+and the update simulation caught the v2 cache itself being filled with
+the previous release's `app.js` from a warm HTTP cache.
+- **Accept:** a browser that installed the previous release, then reloads
+  after the new release is served, shows the new version with no
+  cache-buster (digest link present, `#/digest` renders); with the server
+  stopped after a first visit, the page still loads from cache (REQ-21
+  offline behaviour preserved); the update banner appears when a new
+  worker installs and reloads the page.
+
+### REQ-36 — Reset asks in the page and reports the result
+Reset uses a visible in-page dialog, not `window.confirm`: it names the
+community and states the cost (how many notes and replies will be
+deleted), offers an explicit cancel, and after confirming shows a toast
+with the restored count ("back to its N original notes").
+- **Accept:** visual check drives the full chain — open, cancel (nothing
+  changes), open, confirm (board resets, toast names the community and
+  the restored count); no `window.confirm` remains in `app.js`.
+
+### REQ-37 — The intro plays by itself and never gates the board
+On a first visit the dial-up sequence starts on its own, quietly (sound
+needs a user gesture), and closes by itself when the log finishes. Skip
+is always visible, and the footer still replays the intro with sound.
+- **Accept:** visual check loads the app in a fresh context, clicks
+  nothing, and the overlay is gone within 8 seconds; Skip still closes
+  it immediately when clicked.
+
+### REQ-38 — Counts are pluralised correctly
+Every count the user sees — board cards (including their accessible
+names), page info, community list, import toast, reset dialog — reads
+"1 note" / "2 notes", never "1 notes".
+- **Accept:** `plural()` property checks pass; the visual check asserts a
+  one-note board's card and accessible name say "1 note".
+
 ## 11. Tests
 
 ### REQ-24 — Automated checks
