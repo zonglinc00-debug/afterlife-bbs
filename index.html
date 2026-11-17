@@ -13,6 +13,14 @@
 <body>
 <a class="skip-link" href="#main">Skip to the board</a>
 
+<!-- New-version banner (REQ-35): shown when a service worker update has
+     installed while this page is open. Reloading gets the new code. -->
+<div id="update-banner" class="update-banner" role="status" hidden>
+  <span>A new version of the board is here.</span>
+  <button id="update-reload" type="button" class="btn btn-primary">Reload to get it</button>
+  <button id="update-dismiss" type="button" class="btn btn-ghost">Not now</button>
+</div>
+
 <!-- Dial-up intro overlay -->
 <div id="dialup" class="dialup" role="dialog" aria-modal="true" aria-labelledby="dialup-title" hidden>
   <div class="dialup-box">
@@ -250,6 +258,20 @@
 </footer>
 
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<!-- Reset confirmation (REQ-36): a visible in-page dialog, not a native
+     confirm — automation dismisses native dialogs silently, so the user
+     would see nothing at all. -->
+<div id="reset-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="reset-modal-title" hidden>
+  <div class="modal-card">
+    <h3 id="reset-modal-title">Reset <span id="reset-modal-community"></span>?</h3>
+    <p id="reset-modal-body"></p>
+    <div class="modal-actions">
+      <button id="reset-confirm" type="button" class="btn btn-danger">Yes, reset this board</button>
+      <button id="reset-cancel" type="button" class="btn">Keep my notes</button>
+    </div>
+  </div>
+</div>
 
 <script type="module" src="app.js"></script>
 </body>

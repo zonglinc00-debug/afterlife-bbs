@@ -245,6 +245,45 @@ export function buildDigest(posts, now = new Date()) {
   return { dateLabel, today, unanswered, warmed };
 }
 
+/** "1 note" / "2 notes" — every count the user sees goes through this,
+    so a single post never reads as "1 notes". */
+export function plural(count, one, many) {
+  return `${count} ${count === 1 ? one : many}`;
+}
+
+/**
+ * Anchor demo seed dates to the visitor's first visit (REQ-34).
+ * Seed posts are fiction dated in the past; without this, "New today" in
+ * the digest is empty for anyone arriving after the seed's newest date.
+ * Shifts every post and reply by whole days so the newest post lands on
+ * `now`'s local date, preserving the gaps between posts. Returns the
+ * input untouched when the newest post is already from today, when the
+ * list is empty, or when dates are unparseable. Never mutates its input.
+ */
+export function rebaseSeedDates(posts, now = new Date()) {
+  const stamp = now instanceof Date ? now : new Date(now);
+  const dayStart = (d) => {
+    const x = new Date(d);
+    if (Number.isNaN(x.getTime())) return NaN;
+    x.setHours(0, 0, 0, 0);
+    return x.getTime();
+  };
+  const todayStart = dayStart(stamp);
+  let maxStart = -Infinity;
+  for (const p of posts) {
+    const t = dayStart(p.createdAt);
+    if (Number.isFinite(t) && t > maxStart) maxStart = t;
+  }
+  if (!Number.isFinite(maxStart) || maxStart === todayStart) return posts;
+  const shiftMs = todayStart - maxStart;
+  const shift = (iso) => new Date(new Date(iso).getTime() + shiftMs).toISOString();
+  return posts.map((p) => ({
+    ...p,
+    createdAt: shift(p.createdAt),
+    replies: (p.replies || []).map((r) => ({ ...r, createdAt: shift(r.createdAt) })),
+  }));
+}
+
 /** Serialise one community (boards + posts) for export. */
 export function exportState(state, community = null) {
   return JSON.stringify(
@@ -456,7 +495,10 @@ if (typeof document !== "undefined") {
       if (!res.ok) throw new Error(`Could not load ${comm.seedUrl} (HTTP ${res.status}).`);
       const seed = await res.json();
       const parsed = parseImportedState(JSON.stringify(seed));
-      return { version: parsed.version, boards: parsed.boards, posts: parsed.posts };
+      // Demo seeds are fiction: anchor their dates to this visitor's
+      // first visit so "New today" in the digest is real, not empty
+      // (REQ-34). Stored copies and imports keep their own dates.
+      return { version: parsed.version, boards: parsed.boards, posts: rebaseSeedDates(parsed.posts, new Date()) };
     }
     const made = createCommunity({ name: comm.name, tagline: comm.tagline || "", boardIds: comm.boards.map((b) => b.id) });
     return { version: 2, boards: made.boards, posts: made.posts };
@@ -468,12 +510,38 @@ if (typeof document !== "undefined") {
       const raw = localStorage.getItem(communityDataKey(comm.id));
       if (raw) {
         const parsed = parseImportedState(raw);
-        state = { version: parsed.version, boards: parsed.boards, posts: parsed.posts };
+        const posts = await maybeRebaseStoredSeed(comm, parsed.posts);
+        state = { version: parsed.version, boards: parsed.boards, posts };
+        if (posts !== parsed.posts) saveState();
         return;
       }
     } catch { /* corrupt local copy: fall through to a fresh state */ }
     state = await freshStateFor(comm);
     saveState();
+  }
+
+  /**
+   * Returning visitors who first loaded a demo before REQ-34 shipped hold
+   * seed posts dated in the past, so "New today" is empty for them. If
+   * the stored board is still pure seed content — every post id is a seed
+   * id and no reply carries a user id (u-…) — anchor it to today exactly
+   * like a fresh load does. Any user content (a u- post or reply) means
+   * hands off: real notes are never re-dated.
+   */
+  async function maybeRebaseStoredSeed(comm, storedPosts) {
+    if (!comm.seedUrl) return storedPosts;
+    try {
+      const res = await fetch(comm.seedUrl);
+      if (!res.ok) return storedPosts;
+      const seed = await res.json();
+      const seedIds = new Set((seed.posts || []).map((p) => p.id));
+      const touched = storedPosts.some(
+        (p) => !seedIds.has(p.id)
+          || (p.replies || []).some((r) => typeof r.id === "string" && r.id.startsWith("u-"))
+      );
+      if (touched) return storedPosts;
+      return rebaseSeedDates(storedPosts, new Date());
+    } catch { return storedPosts; }
   }
 
   // ---------- settings / display modes ----------
@@ -547,7 +615,7 @@ if (typeof document !== "undefined") {
         <button type="button" data-community="${escapeHtml(c.id)}" data-seed-url="${c.seedUrl ? escapeHtml(c.seedUrl) : ""}" ${isActive ? 'aria-current="true"' : ""} aria-label="Open ${escapeHtml(c.name)}${isActive ? " (currently open)" : ""}">
           <span class="community-name">${escapeHtml(c.name)}${isActive ? ' <span class="community-open">● open now</span>' : ""}</span>
           <span class="community-tagline">${escapeHtml(c.tagline || "")}</span>
-          <span class="community-meta">${count === null ? "Not visited yet — tap to open" : `${count} note${count === 1 ? "" : "s"}`}${c.seedUrl ? "" : " · yours"}</span>
+          <span class="community-meta">${count === null ? "Not visited yet — tap to open" : plural(count, "note", "notes")}${c.seedUrl ? "" : " · yours"}</span>
         </button>
       </li>`;
     }).join("");
@@ -560,7 +628,7 @@ if (typeof document !== "undefined") {
       if (seedUrl && meta && meta.textContent.startsWith("Not visited yet")) {
         fetch(seedUrl).then((r) => r.json()).then((seed) => {
           const n = Array.isArray(seed.posts) ? seed.posts.length : 0;
-          meta.textContent = `${n} note${n === 1 ? "" : "s"} waiting`;
+          meta.textContent = `${plural(n, "note", "notes")} waiting`;
         }).catch(() => { /* keep the fallback text */ });
       }
     });
@@ -592,10 +660,10 @@ if (typeof document !== "undefined") {
     ul.innerHTML = state.boards.map((b) => {
       const count = state.posts.filter((p) => p.boardId === b.id).length;
       const candles = state.posts.filter((p) => p.boardId === b.id).reduce((s, p) => s + (p.candles || 0), 0);
-      return `<li class="board-card"><a href="#/board/${escapeHtml(b.id)}" aria-label="${escapeHtml(b.name)}, ${count} notes">
+      return `<li class="board-card"><a href="#/board/${escapeHtml(b.id)}" aria-label="${escapeHtml(b.name)}, ${plural(count, "note", "notes")}">
         <h3><span class="board-icon" aria-hidden="true">${escapeHtml(b.icon)}</span>${escapeHtml(b.name)}</h3>
         <p>${escapeHtml(b.tagline)}</p>
-        <p class="board-meta">${count} note${count === 1 ? "" : "s"} · 🕯️ ${candles} candle${candles === 1 ? "" : "s"} lit</p>
+        <p class="board-meta">${plural(count, "note", "notes")} · 🕯️ ${plural(candles, "candle", "candles")} lit</p>
       </a></li>`;
     }).join("");
     showView("home");
@@ -640,7 +708,7 @@ if (typeof document !== "undefined") {
         <p class="post-meta">${escapeHtml(p.author)} · ${escapeHtml(fmtDate(p.createdAt))} · <span class="candles">🕯️ ${p.candles || 0}</span> · 💬 ${(p.replies || []).length} repl${(p.replies || []).length === 1 ? "y" : "ies"}</p>
       </li>`).join("");
     $("#empty-board").hidden = posts.length !== 0;
-    $("#page-info").textContent = posts.length === 0 ? "No pages yet" : `Page ${page.page} of ${page.totalPages} — ${page.total} note${page.total === 1 ? "" : "s"}`;
+    $("#page-info").textContent = posts.length === 0 ? "No pages yet" : `Page ${page.page} of ${page.totalPages} — ${plural(page.total, "note", "notes")}`;
     $("#page-prev").disabled = !page.hasPrev;
     $("#page-next").disabled = !page.hasNext;
     $("#end-of-board").hidden = !(posts.length > 0 && !page.hasNext);
@@ -780,6 +848,7 @@ if (typeof document !== "undefined") {
     $("#dialup-connect").focus();
   }
   function runDialup(withSound) {
+    clearTimeout(dialupTimer); // a second Dial-in click restarts cleanly
     const log = $("#dialup-log");
     const status = $("#dialup-status");
     log.innerHTML = "";
@@ -842,7 +911,7 @@ if (typeof document !== "undefined") {
         lastMatch = null;
         currentPage = 1;
         route();
-        toast(`Import complete — ${imported.posts.length} notes on ${imported.boards.length} boards in ${community.name}.`);
+        toast(`Import complete — ${plural(imported.posts.length, "note", "notes")} on ${plural(imported.boards.length, "board", "boards")} in ${community.name}.`);
       } catch (err) {
         toast(`Import failed: ${err.message}`);
       }
@@ -871,7 +940,10 @@ if (typeof document !== "undefined") {
     $("#replay-dialup").addEventListener("click", openDialup);
     let seen = null;
     try { seen = sessionStorage.getItem("afterlife-intro-seen"); } catch { /* ignore */ }
-    if (!seen) openDialup();
+    // REQ-37: the intro plays by itself (quiet — sound needs a gesture)
+    // and closes on its own, so a first visit is never gated on a click.
+    // Skip is always there, and the footer replays it with sound.
+    if (!seen) { openDialup(); runDialup(false); }
 
     // Routing & pagination.
     window.addEventListener("hashchange", () => { lastMatch = null; route(); });
@@ -946,14 +1018,38 @@ if (typeof document !== "undefined") {
       if (e.target.files && e.target.files[0]) doImport(e.target.files[0]);
       e.target.value = "";
     });
-    $("#reset-board").addEventListener("click", () => {
-      if (!window.confirm(`Reset ${community.name} to its original notes? This deletes every note and reply you added on this board.`)) return;
+    // Reset (REQ-36): a visible in-page confirmation, not a native
+    // dialog — automation auto-dismisses window.confirm, so the red team
+    // saw nothing at all. The modal names the community and the cost,
+    // and the success toast reports the restored count.
+    let resetReturnFocus = null;
+    const openResetModal = () => {
+      const total = state.posts.length;
+      const replies = state.posts.reduce((s, p) => s + (p.replies || []).length, 0);
+      $("#reset-modal-community").textContent = community.name;
+      $("#reset-modal-body").textContent = `This deletes all ${plural(total, "note", "notes")} and ${plural(replies, "reply", "replies")} on this board, then restores the original seed notes. Export first if you want to keep anything.`;
+      $("#reset-modal").hidden = false;
+      resetReturnFocus = document.activeElement;
+      $("#reset-confirm").focus();
+    };
+    const closeResetModal = () => {
+      $("#reset-modal").hidden = true;
+      if (resetReturnFocus && typeof resetReturnFocus.focus === "function") resetReturnFocus.focus();
+    };
+    $("#reset-board").addEventListener("click", openResetModal);
+    $("#reset-cancel").addEventListener("click", closeResetModal);
+    $("#reset-modal").addEventListener("click", (e) => { if (e.target.id === "reset-modal") closeResetModal(); });
+    $("#reset-modal").addEventListener("keydown", (e) => { if (e.key === "Escape") closeResetModal(); });
+    $("#reset-confirm").addEventListener("click", () => {
+      closeResetModal();
       try { localStorage.removeItem(communityDataKey(community.id)); } catch { /* ignore */ }
       lit = {};
       saveLit();
       lastMatch = null;
-      loadCommunityState(community).then(() => { currentPage = 1; route(); toast("Board reset to the seed notes."); })
-        .catch((err) => toast(`Reset failed: ${err.message}`));
+      loadCommunityState(community).then(() => {
+        currentPage = 1; route();
+        toast(`Board reset — ${community.name} is back to its ${plural(state.posts.length, "original note", "original notes")}.`);
+      }).catch((err) => toast(`Reset failed: ${err.message}`));
     });
 
     // Kit: open your own board in five minutes.
@@ -998,9 +1094,33 @@ if (typeof document !== "undefined") {
     setInterval(updateRestUI, 60000);
 
     // PWA: offline cache for this site's own static files only.
+    // REQ-35: updateViaCache "none" makes the browser always fetch a
+    // fresh sw.js on its update check, so a new release is actually
+    // discovered; when a new worker installs while this page is open,
+    // offer a reload instead of silently serving old code.
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("sw.js").catch(() => { /* offline support is a bonus, not a blocker */ });
+      navigator.serviceWorker.register("sw.js", { updateViaCache: "none" })
+        .then((reg) => {
+          const offerUpdate = () => {
+            const banner = $("#update-banner");
+            if (banner) banner.hidden = false;
+          };
+          if (reg.waiting && navigator.serviceWorker.controller) offerUpdate();
+          reg.addEventListener("updatefound", () => {
+            const worker = reg.installing;
+            if (!worker) return;
+            worker.addEventListener("statechange", () => {
+              if (worker.state === "installed" && navigator.serviceWorker.controller) offerUpdate();
+            });
+          });
+          reg.update().catch(() => { /* update check is best-effort */ });
+        })
+        .catch(() => { /* offline support is a bonus, not a blocker */ });
     }
+    const updateReload = $("#update-reload");
+    if (updateReload) updateReload.addEventListener("click", () => window.location.reload());
+    const updateDismiss = $("#update-dismiss");
+    if (updateDismiss) updateDismiss.addEventListener("click", () => { $("#update-banner").hidden = true; });
 
     // Communities first: which board are we on?
     loadUserCommunities();
