@@ -14,6 +14,7 @@ import {
   addReplyToPost,
   toggleCandle,
   findHelpers,
+  buildDigest,
   exportState,
   parseImportedState,
   createCommunity,
@@ -367,6 +368,65 @@ check("seeds: hollow-creek (37) and marlowe-house (28) both validate", () => {
     assert(!parsed.posts.some((p) => (p.title + p.body).includes(otherName)),
       `${file}: a post mentions ${otherName}`);
   }
+});
+
+// --- 10. digest: real, computed, never ranked ----------------------------
+check("digest: today is the local date only — yesterday and tomorrow are out", () => {
+  const now = new Date(2026, 10, 17, 15, 30);
+  const posts = [
+    fakePost({ createdAt: new Date(2026, 10, 17, 9, 0).toISOString() }),
+    fakePost({ createdAt: new Date(2026, 10, 17, 23, 59).toISOString() }),
+    fakePost({ createdAt: new Date(2026, 10, 16, 23, 59).toISOString() }),
+    fakePost({ createdAt: new Date(2026, 10, 18, 0, 1).toISOString() }),
+  ];
+  const d = buildDigest(posts, now);
+  assertEqual(d.today.length, 2, "only the two 2026-11-17 posts are 'today'");
+  assert(new Date(d.today[0].createdAt) >= new Date(d.today[1].createdAt), "today must be newest-first");
+  assert(d.dateLabel.includes("2026") && d.dateLabel.includes("November"), `date label wrong: ${d.dateLabel}`);
+});
+
+check("digest: unanswered requests are requests with no replies, newest first, max 5", () => {
+  const now = new Date(2026, 10, 17, 15, 30);
+  const posts = [
+    fakePost({ kind: "request", category: "fix", replies: [], createdAt: new Date(2026, 10, 15, 9, 0).toISOString() }),
+    fakePost({ kind: "request", category: "borrow", replies: [{ id: "r1", author: "A", body: "yes", createdAt: new Date().toISOString() }], createdAt: new Date(2026, 10, 16, 9, 0).toISOString() }),
+    fakePost({ kind: "offer", category: "fix", replies: [], createdAt: new Date(2026, 10, 17, 9, 0).toISOString() }),
+    fakePost({ kind: null, category: null, replies: [], createdAt: new Date(2026, 10, 17, 10, 0).toISOString() }),
+  ];
+  for (let i = 0; i < 7; i++) {
+    posts.push(fakePost({ kind: "request", category: "ride", replies: [], createdAt: new Date(2026, 10, 10 + i, 9, 0).toISOString() }));
+  }
+  const d = buildDigest(posts, now);
+  assertEqual(d.unanswered.length, 5, "unanswered must cap at 5");
+  assert(d.unanswered.every((p) => p.kind === "request" && (p.replies || []).length === 0), "unanswered must be reply-less requests only");
+  for (let i = 1; i < d.unanswered.length; i++) {
+    assert(new Date(d.unanswered[i - 1].createdAt) >= new Date(d.unanswered[i].createdAt), "unanswered must be newest-first");
+  }
+});
+
+check("digest: warmed notes are today's posts with candles, newest first, never ranked by count", () => {
+  const now = new Date(2026, 10, 17, 15, 30);
+  const posts = [
+    fakePost({ candles: 1, createdAt: new Date(2026, 10, 17, 8, 0).toISOString() }),
+    fakePost({ candles: 40, createdAt: new Date(2026, 10, 17, 9, 0).toISOString() }),
+    fakePost({ candles: 0, createdAt: new Date(2026, 10, 17, 10, 0).toISOString() }),
+    fakePost({ candles: 5, createdAt: new Date(2026, 10, 17, 11, 0).toISOString() }),
+    fakePost({ candles: 99, createdAt: new Date(2026, 10, 16, 11, 0).toISOString() }),
+  ];
+  const d = buildDigest(posts, now);
+  assertEqual(d.warmed.length, 3, "warmed must cap at 3");
+  assert(d.warmed.every((p) => (p.candles || 0) > 0), "warmed must only hold posts with candles");
+  // Newest first — the 40-candle post (09:00) comes AFTER the 5-candle one (11:00).
+  assertEqual(d.warmed[0].candles, 5, "warmed must be newest-first, not most-candles-first");
+  assertEqual(d.warmed[1].candles, 40, "warmed order must ignore the count");
+  assertEqual(d.warmed[2].candles, 1, "warmed must include the 1-candle post");
+});
+
+check("digest: empty board digests to empty sections, never invented content", () => {
+  const d = buildDigest([], new Date(2026, 10, 17, 15, 30));
+  assertEqual(d.today, [], "empty board: today must be empty");
+  assertEqual(d.unanswered, [], "empty board: unanswered must be empty");
+  assertEqual(d.warmed, [], "empty board: warmed must be empty");
 });
 
 // --- summary ------------------------------------------------------------------
