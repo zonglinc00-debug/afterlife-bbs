@@ -1,0 +1,706 @@
+{
+  "boardName": "Afterlife BBS — Hollow Creek",
+  "boards": [
+    {
+      "icon": "🌳",
+      "id": "town-square",
+      "name": "Town Square",
+      "tagline": "The notice board by the old oak. News, notices, and neighbourly chatter."
+    },
+    {
+      "icon": "🕯️",
+      "id": "seance-circle",
+      "name": "Séance Circle",
+      "tagline": "Ask for help, offer a hand. One neighbour at a time."
+    },
+    {
+      "icon": "📚",
+      "id": "the-library",
+      "name": "The Library",
+      "tagline": "Books, films, and songs worth your evening."
+    },
+    {
+      "icon": "🔧",
+      "id": "workshop",
+      "name": "Workshop",
+      "tagline": "Trade skills, tools, and know-how. No money changes hands unless you say so."
+    },
+    {
+      "icon": "🧤",
+      "id": "lost-and-found",
+      "name": "Lost & Found",
+      "tagline": "Lost something? Found something? Pin it here."
+    }
+  ],
+  "posts": [
+    {
+      "id": "ts-001",
+      "boardId": "town-square",
+      "title": "Saturday market is on, rain or shine",
+      "body": "The weekend market opens at nine by the old bandstand, and the pumpkin bread usually sells out by ten. Bring your own bags if you can, the paper ones run out fast. If it rains, we move under the awning by the library steps.",
+      "author": "Mabel Hart",
+      "createdAt": "2026-11-10T09:12:00",
+      "candles": 18,
+      "kind": null,
+      "category": null,
+      "replies": [
+        {
+          "id": "ts-001-r1",
+          "author": "Theo Alden",
+          "body": "I will bring the extra folding table from the garage. Someone remind me to grab the chalkboard sign too.",
+          "createdAt": "2026-11-10T10:04:00"
+        },
+        {
+          "id": "ts-001-r2",
+          "author": "June Calloway",
+          "body": "Pumpkin bread is worth the early alarm. I will be there at nine sharp.",
+          "createdAt": "2026-11-10T11:20:00"
+        }
+      ]
+    },
+    {
+      "id": "ts-002",
+      "boardId": "town-square",
+      "title": "Leaf piles are back on Maple Lane",
+      "body": "The town crew will collect bagged leaves on Thursday morning, so please have them at the curb by eight. Loose piles keep blowing into the drains, and nobody wants a flooded corner again. If you need bags, I have a spare box on my porch.",
+      "author": "Silas Greene",
+      "createdAt": "2026-11-10T14:45:00",
+      "candles": 9,
+      "kind": null,
+      "category": null,
+      "replies": [
+        {
+          "id": "ts-002-r1",
+          "author": "Ruth Okafor",
+          "body": "Thank you, Silas. I will grab two bags tomorrow after work.",
+          "createdAt": "2026-11-10T16:02:00"
+        }
+      ]
+    },
+    {
+      "id": "ts-003",
+      "boardId": "town-square",
+      "title": "Thank you for the quiet street last night",
+      "body": "My little one finally slept through the night, and I think the whole street helped by keeping it down after nine. I know that sounds small, but it meant the world to us. Coffee is on me at the market on Saturday if you see me there.",
+      "author": "Ada Lindqvist",
+      "createdAt": "2026-11-11T07:30:00",
+      "candles": 22,
+      "kind": null,
+      "category": null,
+      "replies": [
+        {
+          "id": "ts-003-r1",
+          "author": "Mabel Hart",
+          "body": "Glad to hear it, Ada. Sleep is precious around here, we all remember those nights.",
+          "createdAt": "2026-11-11T08:15:00"
+        }
+      ]
+    },
+    {
+      "id": "ts-004",
+      "boardId": "town-square",
+      "title": "The streetlight on Birch is flickering again",
+      "body": "The lamp outside number 14 has started flickering every evening, and it goes dark for a few minutes at a time. I have written down the pole number for the town office. If anyone walks that way after dark, take the other side until it is fixed.",
+      "author": "Frank Delaney",
+      "createdAt": "2026-11-11T18:20:00",
+      "candles": 7,
+      "kind": null,
+      "category": null,
+      "replies": []
+    },
+    {
+      "id": "ts-005",
+      "boardId": "town-square",
+      "title": "Soup night at the community hall, Friday at six",
+      "body": "We are doing a simple soup night this Friday, nothing fancy, just three big pots and bread. Bring a bowl if you have a favourite one, and bring a friend if you like. Donations go toward new chairs for the hall.",
+      "author": "June Calloway",
+      "createdAt": "2026-11-12T10:05:00",
+      "candles": 15,
+      "kind": null,
+      "category": null,
+      "replies": [
+        {
+          "id": "ts-005-r1",
+          "author": "Priya Nair",
+          "body": "I can bring a pot of lentil soup and a loaf from the bakery. Count me in.",
+          "createdAt": "2026-11-12T12:40:00"
+        },
+        {
+          "id": "ts-005-r2",
+          "author": "Silas Greene",
+          "body": "I will come early to help set up the tables. Just tell me what time.",
+          "createdAt": "2026-11-12T13:18:00"
+        }
+      ]
+    },
+    {
+      "id": "ts-006",
+      "boardId": "town-square",
+      "title": "Does anyone else hear the owl at night?",
+      "body": "There is an owl somewhere behind the schoolyard, and it has been calling just after midnight all week. I stayed up to listen last night and it sounded closer than usual. Has anyone actually spotted it, or am I just losing sleep over nothing?",
+      "author": "Theo Alden",
+      "createdAt": "2026-11-13T08:50:00",
+      "candles": 12,
+      "kind": null,
+      "category": null,
+      "replies": [
+        {
+          "id": "ts-006-r1",
+          "author": "Ada Lindqvist",
+          "body": "I heard it too, around one in the morning. I think it lives in the big oak by the fence.",
+          "createdAt": "2026-11-13T09:33:00"
+        }
+      ]
+    },
+    {
+      "id": "ts-007",
+      "boardId": "town-square",
+      "title": "Winter coats needed for the school drive",
+      "body": "The school is collecting clean winter coats for kids who have outgrown theirs, sizes five to twelve. You can drop them at the front office any weekday before four. If a coat is missing a button, that is fine, we can fix it.",
+      "author": "Ruth Okafor",
+      "createdAt": "2026-11-14T11:15:00",
+      "candles": 20,
+      "kind": null,
+      "category": null,
+      "replies": [
+        {
+          "id": "ts-007-r1",
+          "author": "Frank Delaney",
+          "body": "I have two coats from my grandson that still have plenty of wear left. I will drop them off Monday.",
+          "createdAt": "2026-11-14T15:02:00"
+        }
+      ]
+    },
+    {
+      "id": "sc-001",
+      "boardId": "seance-circle",
+      "title": "Can anyone lend me a tall ladder this weekend?",
+      "body": "I need to clear the gutters before the next rain, and my little step stool is not tall enough. I only need the ladder for Saturday morning, and I will return it clean and on time. I can trade you a jar of homemade jam for the trouble.",
+      "author": "Priya Nair",
+      "createdAt": "2026-11-10T12:30:00",
+      "candles": 11,
+      "kind": "request",
+      "category": "borrow",
+      "replies": [
+        {
+          "id": "sc-001-r1",
+          "author": "Frank Delaney",
+          "body": "You can borrow mine, Priya. It is in the shed behind the house, just knock when you come by.",
+          "createdAt": "2026-11-10T13:45:00"
+        }
+      ]
+    },
+    {
+      "id": "sc-002",
+      "boardId": "seance-circle",
+      "title": "My kitchen tap will not stop dripping",
+      "body": "The tap in the kitchen has started dripping all night, and I am fairly sure the washer has given up. I have turned off the water under the sink for now, but I do not want to leave it like that. If someone knows taps, I would be grateful for an hour of help.",
+      "author": "Silas Greene",
+      "createdAt": "2026-11-11T09:40:00",
+      "candles": 14,
+      "kind": "request",
+      "category": "fix",
+      "replies": [
+        {
+          "id": "sc-002-r1",
+          "author": "Theo Alden",
+          "body": "I have fixed two taps like that this year. I can come by Thursday evening with spare washers.",
+          "createdAt": "2026-11-11T10:22:00"
+        },
+        {
+          "id": "sc-002-r2",
+          "author": "Silas Greene",
+          "body": "Thursday evening works perfectly. Thank you, Theo, I owe you a coffee.",
+          "createdAt": "2026-11-11T11:05:00"
+        }
+      ]
+    },
+    {
+      "id": "sc-003",
+      "boardId": "seance-circle",
+      "title": "Ride to town on Tuesday morning?",
+      "body": "I need to get to the clinic in town on Tuesday around nine, and the bus leaves too early for my little one. If anyone is driving that way, I would happily share the fuel cost. I only need a lift there, my sister can bring me back.",
+      "author": "Ada Lindqvist",
+      "createdAt": "2026-11-11T19:15:00",
+      "candles": 8,
+      "kind": "request",
+      "category": "ride",
+      "replies": [
+        {
+          "id": "sc-003-r1",
+          "author": "Ruth Okafor",
+          "body": "I drive past the clinic every Tuesday at half past eight. I can pick you up at your door.",
+          "createdAt": "2026-11-11T20:10:00"
+        }
+      ]
+    },
+    {
+      "id": "sc-004",
+      "boardId": "seance-circle",
+      "title": "Looking for someone to walk with in the evenings",
+      "body": "Since the nights got darker, I do not enjoy walking alone after supper anymore. If anyone fancies a slow loop around the green at seven, I would love the company. We can go at whatever pace suits, no rush at all.",
+      "author": "Mabel Hart",
+      "createdAt": "2026-11-12T16:25:00",
+      "candles": 19,
+      "kind": "request",
+      "category": "company",
+      "replies": [
+        {
+          "id": "sc-004-r1",
+          "author": "June Calloway",
+          "body": "I would love that, Mabel. Seven at the green suits me, and I know a quieter route we can try.",
+          "createdAt": "2026-11-12T17:40:00"
+        },
+        {
+          "id": "sc-004-r2",
+          "author": "Priya Nair",
+          "body": "Count me in on Thursdays too, if you will have me along.",
+          "createdAt": "2026-11-12T18:05:00"
+        }
+      ]
+    },
+    {
+      "id": "sc-005",
+      "boardId": "seance-circle",
+      "title": "Can someone teach me to hem trousers?",
+      "body": "I bought a pair of work trousers that are two inches too long, and the tailor in town is booked until next month. I have a needle and thread and a willingness to learn, just no idea where to start. An hour of your time would save me a month of tripping over the hems.",
+      "author": "Theo Alden",
+      "createdAt": "2026-11-13T13:10:00",
+      "candles": 6,
+      "kind": "request",
+      "category": "skill",
+      "replies": [
+        {
+          "id": "sc-005-r1",
+          "author": "Mabel Hart",
+          "body": "Bring them over on Sunday afternoon and we will do it together. It is easier than it looks, I promise.",
+          "createdAt": "2026-11-13T14:28:00"
+        }
+      ]
+    },
+    {
+      "id": "sc-006",
+      "boardId": "seance-circle",
+      "title": "My fence panel blew down in the wind",
+      "body": "One fence panel came down in last night's wind, and now the garden is open to the lane. I have propped it up for now, but it needs two people and a drill to fix properly. If anyone has a spare afternoon this week, I would be very grateful.",
+      "author": "Ruth Okafor",
+      "createdAt": "2026-11-14T08:05:00",
+      "candles": 10,
+      "kind": "request",
+      "category": "fix",
+      "replies": []
+    },
+    {
+      "id": "sc-007",
+      "boardId": "seance-circle",
+      "title": "Borrowing a wheelbarrow for the weekend?",
+      "body": "I am finally clearing the back garden before winter, and my old wheelbarrow has a flat tyre that will not hold air. If someone has one I could borrow from Saturday to Sunday, I would return it washed. Happy to help with a job in return.",
+      "author": "Frank Delaney",
+      "createdAt": "2026-11-15T10:40:00",
+      "candles": 5,
+      "kind": "request",
+      "category": "borrow",
+      "replies": [
+        {
+          "id": "sc-007-r1",
+          "author": "Silas Greene",
+          "body": "Mine is yours, Frank. It is by the side gate, just bring it back when you are done.",
+          "createdAt": "2026-11-15T11:22:00"
+        }
+      ]
+    },
+    {
+      "id": "lb-001",
+      "boardId": "the-library",
+      "title": "A quiet novel for long November evenings",
+      "body": "I just finished a gentle novel about a retired letter carrier who walks the same village route for forty years. Nothing dramatic happens, and that is exactly the point. If you like slow books with kind people in them, this one is for you.",
+      "author": "June Calloway",
+      "createdAt": "2026-11-10T20:15:00",
+      "candles": 16,
+      "kind": null,
+      "category": null,
+      "replies": [
+        {
+          "id": "lb-001-r1",
+          "author": "Ada Lindqvist",
+          "body": "That sounds perfect for this time of year. I will look for it on the library shelf tomorrow.",
+          "createdAt": "2026-11-11T08:02:00"
+        }
+      ]
+    },
+    {
+      "id": "lb-002",
+      "boardId": "the-library",
+      "title": "A cookbook that actually taught me to cook",
+      "body": "I borrowed a battered old cookbook from the library shelf, the kind with handwritten notes in the margins. The lentil stew on page forty is now a weekly meal in our house. If you are learning to cook, start with that one and ignore the fancy books.",
+      "author": "Priya Nair",
+      "createdAt": "2026-11-11T15:30:00",
+      "candles": 13,
+      "kind": null,
+      "category": null,
+      "replies": [
+        {
+          "id": "lb-002-r1",
+          "author": "Mabel Hart",
+          "body": "The margin notes are the best part. Someone before us wrote to add twice the garlic, and they were right.",
+          "createdAt": "2026-11-11T16:45:00"
+        }
+      ]
+    },
+    {
+      "id": "lb-003",
+      "boardId": "the-library",
+      "title": "A book about how towns used to talk to each other",
+      "body": "I found a local history book about noticeboards, parish newsletters, and the days before everyone shouted into the void. It reminded me how much we used to know about our neighbours. Worth a read if you miss that feeling too.",
+      "author": "Theo Alden",
+      "createdAt": "2026-11-12T19:45:00",
+      "candles": 17,
+      "kind": null,
+      "category": null,
+      "replies": []
+    },
+    {
+      "id": "lb-004",
+      "boardId": "the-library",
+      "title": "A picture book my daughter asks for every night",
+      "body": "It is a simple story about a cat who gets lost in a garden and finds its way home by following the sound of a kettle. The pictures are soft and the ending is calm, which is all I ask for at bedtime. We have read it eleven times this week.",
+      "author": "Ada Lindqvist",
+      "createdAt": "2026-11-13T20:10:00",
+      "candles": 21,
+      "kind": null,
+      "category": null,
+      "replies": [
+        {
+          "id": "lb-004-r1",
+          "author": "Ruth Okafor",
+          "body": "Eleven times is a strong review. I will borrow it for my granddaughter next week.",
+          "createdAt": "2026-11-14T09:12:00"
+        },
+        {
+          "id": "lb-004-r2",
+          "author": "Ada Lindqvist",
+          "body": "Twelve times now. She has started reciting the kettle line before I turn the page.",
+          "createdAt": "2026-11-14T20:30:00"
+        }
+      ]
+    },
+    {
+      "id": "lb-005",
+      "boardId": "the-library",
+      "title": "A practical guide to fixing things instead of replacing them",
+      "body": "This repair manual has saved me money three times already, once on a kettle and twice on a chair. It explains things in plain words and never assumes you already know the jargon. If your house is full of almost-broken things, start here.",
+      "author": "Silas Greene",
+      "createdAt": "2026-11-15T14:20:00",
+      "candles": 8,
+      "kind": null,
+      "category": null,
+      "replies": [
+        {
+          "id": "lb-005-r1",
+          "author": "Frank Delaney",
+          "body": "I need that book. My toaster has been on its last legs since spring.",
+          "createdAt": "2026-11-15T16:05:00"
+        }
+      ]
+    },
+    {
+      "id": "lb-006",
+      "boardId": "the-library",
+      "title": "The poetry shelf deserves more visitors",
+      "body": "There is a slim book of poems about seasons and small towns on the second shelf, and it has not been borrowed in months. I read three poems standing in the aisle and nearly missed my bus. Go and give it a home for a week.",
+      "author": "Ruth Okafor",
+      "createdAt": "2026-11-16T11:35:00",
+      "candles": 10,
+      "kind": null,
+      "category": null,
+      "replies": []
+    },
+    {
+      "id": "ws-001",
+      "boardId": "workshop",
+      "title": "Saturday morning: sharpen your kitchen knives",
+      "body": "I am running a small knife-sharpening session in my garage this Saturday from ten to twelve. Bring up to three knives, and I will show you how to keep an edge at home. No charge, just bring a mug for tea afterwards.",
+      "author": "Frank Delaney",
+      "createdAt": "2026-11-10T17:20:00",
+      "candles": 15,
+      "kind": null,
+      "category": null,
+      "replies": [
+        {
+          "id": "ws-001-r1",
+          "author": "Priya Nair",
+          "body": "My best knife has been blunt for months. I will be there at ten with all three.",
+          "createdAt": "2026-11-10T18:40:00"
+        }
+      ]
+    },
+    {
+      "id": "ws-002",
+      "boardId": "workshop",
+      "title": "Knitting circle, Wednesdays at the hall",
+      "body": "The knitting circle meets every Wednesday at two in the community hall, and beginners are genuinely welcome. We have spare needles and a box of donated wool, so you do not need to buy anything to start. Come even if you can only stay for half an hour.",
+      "author": "Mabel Hart",
+      "createdAt": "2026-11-11T12:10:00",
+      "candles": 12,
+      "kind": null,
+      "category": null,
+      "replies": [
+        {
+          "id": "ws-002-r1",
+          "author": "June Calloway",
+          "body": "I finally finished my first scarf last week, crooked edges and all. It is the warmest thing I own.",
+          "createdAt": "2026-11-11T13:55:00"
+        }
+      ]
+    },
+    {
+      "id": "ws-003",
+      "boardId": "workshop",
+      "title": "I will trade bike repairs for baking lessons",
+      "body": "I can fix punctures, adjust brakes, and sort out squeaky chains, but my baking is a disaster. If someone will teach me a simple loaf, I will keep your bike running all winter. Fair trade, I think, and we both end up fed and moving.",
+      "author": "Theo Alden",
+      "createdAt": "2026-11-12T09:50:00",
+      "candles": 19,
+      "kind": null,
+      "category": null,
+      "replies": [
+        {
+          "id": "ws-003-r1",
+          "author": "Priya Nair",
+          "body": "Deal. I will teach you the loaf if you teach me how to stop my brakes squeaking.",
+          "createdAt": "2026-11-12T10:30:00"
+        },
+        {
+          "id": "ws-003-r2",
+          "author": "Theo Alden",
+          "body": "Done. Bring the bike on Saturday and we will start with the brakes.",
+          "createdAt": "2026-11-12T11:12:00"
+        }
+      ]
+    },
+    {
+      "id": "ws-004",
+      "boardId": "workshop",
+      "title": "Woodworking basics: build a bird box",
+      "body": "I am holding a bird box workshop next Sunday afternoon for anyone who wants to try woodworking. All the wood is cut to size and the tools are provided, so you just need to turn up. You will go home with a bird box and sawdust in your pockets.",
+      "author": "Silas Greene",
+      "createdAt": "2026-11-13T15:45:00",
+      "candles": 14,
+      "kind": null,
+      "category": null,
+      "replies": []
+    },
+    {
+      "id": "ws-005",
+      "boardId": "workshop",
+      "title": "Free seedlings in spring, if you help me plan now",
+      "body": "I have more tomato seedlings than I can ever plant, and I would rather share them than watch them wilt. If you want some in spring, tell me now and I will pot them up for you. In return, I only ask that you tell me how they grew.",
+      "author": "Ada Lindqvist",
+      "createdAt": "2026-11-14T13:25:00",
+      "candles": 17,
+      "kind": null,
+      "category": null,
+      "replies": [
+        {
+          "id": "ws-005-r1",
+          "author": "Mabel Hart",
+          "body": "I would love four plants, please. My tomatoes last year were more leaf than fruit, so I need all the help I can get.",
+          "createdAt": "2026-11-14T14:50:00"
+        }
+      ]
+    },
+    {
+      "id": "ws-006",
+      "boardId": "workshop",
+      "title": "Learn to darn socks, save your favourites",
+      "body": "I am teaching a one-hour darning session on Tuesday evening, and it is easier than it sounds. Bring a worn sock and a needle if you have one, and I will bring the rest. Your favourite socks deserve a second life instead of the bin.",
+      "author": "June Calloway",
+      "createdAt": "2026-11-16T18:30:00",
+      "candles": 7,
+      "kind": null,
+      "category": null,
+      "replies": []
+    },
+    {
+      "id": "lf-001",
+      "boardId": "lost-and-found",
+      "title": "Lost: grey tabby cat, answers to Milo",
+      "body": "Our grey tabby Milo slipped out last night near the schoolyard and has not come home. He is friendly, a bit shy with strangers, and wears a green collar with a small bell. If you see him, please let me know here and do not chase him.",
+      "author": "Ada Lindqvist",
+      "createdAt": "2026-11-10T21:40:00",
+      "candles": 24,
+      "kind": null,
+      "category": null,
+      "replies": [
+        {
+          "id": "lf-001-r1",
+          "author": "Theo Alden",
+          "body": "I think I saw a grey cat near the oak tree this morning. I will look again on my way home tonight.",
+          "createdAt": "2026-11-11T07:15:00"
+        },
+        {
+          "id": "lf-001-r2",
+          "author": "Ada Lindqvist",
+          "body": "Thank you, Theo. He came home just before midnight, hungry and very pleased with himself.",
+          "createdAt": "2026-11-11T23:20:00"
+        }
+      ]
+    },
+    {
+      "id": "lf-002",
+      "boardId": "lost-and-found",
+      "title": "Found: a single brown leather glove on Maple Lane",
+      "body": "I found a brown leather glove on the pavement near the corner shop this morning. It looks well worn and loved, so I would like to return it to its owner. It is on my porch in a paper bag, just knock and ask for Silas.",
+      "author": "Silas Greene",
+      "createdAt": "2026-11-11T10:20:00",
+      "candles": 6,
+      "kind": null,
+      "category": null,
+      "replies": []
+    },
+    {
+      "id": "lf-003",
+      "boardId": "lost-and-found",
+      "title": "Lost: blue umbrella with a wooden handle",
+      "body": "I left a dark blue umbrella with a curved wooden handle on the bench by the bandstand after the market. It was a gift from my sister, so I would really like it back. If you picked it up by mistake, no worries at all, just let me know.",
+      "author": "Ruth Okafor",
+      "createdAt": "2026-11-12T14:05:00",
+      "candles": 9,
+      "kind": null,
+      "category": null,
+      "replies": [
+        {
+          "id": "lf-003-r1",
+          "author": "Frank Delaney",
+          "body": "I saw an umbrella like that leaning by the library door. It might be yours, Ruth.",
+          "createdAt": "2026-11-12T15:30:00"
+        }
+      ]
+    },
+    {
+      "id": "lf-004",
+      "boardId": "lost-and-found",
+      "title": "Found: a set of keys on a red ribbon",
+      "body": "I found a set of keys tied with a red ribbon near the community hall car park. There are three keys and a small brass tag, but I will not describe the tag here so the right owner can claim it. Tell me what the tag says and they are yours.",
+      "author": "Theo Alden",
+      "createdAt": "2026-11-13T17:55:00",
+      "candles": 13,
+      "kind": null,
+      "category": null,
+      "replies": [
+        {
+          "id": "lf-004-r1",
+          "author": "Mabel Hart",
+          "body": "Those sound like mine. I will come by tomorrow and tell you what the tag says.",
+          "createdAt": "2026-11-13T19:10:00"
+        }
+      ]
+    },
+    {
+      "id": "lf-005",
+      "boardId": "lost-and-found",
+      "title": "Lost: my grandson's red scarf",
+      "body": "My grandson lost his red knitted scarf somewhere between the school gate and the green yesterday afternoon. It is not worth much money, but his grandmother made it and he wears it everywhere. If anyone finds it, please leave a note here.",
+      "author": "June Calloway",
+      "createdAt": "2026-11-15T09:30:00",
+      "candles": 18,
+      "kind": null,
+      "category": null,
+      "replies": [
+        {
+          "id": "lf-005-r1",
+          "author": "Ada Lindqvist",
+          "body": "I will keep an eye out on the school run tomorrow. Fingers crossed it turns up.",
+          "createdAt": "2026-11-15T10:45:00"
+        }
+      ]
+    },
+    {
+      "id": "lf-006",
+      "boardId": "lost-and-found",
+      "title": "Found: a child's drawing of a pumpkin, left at the market",
+      "body": "Someone left a crayon drawing of a very proud pumpkin on the market stall table on Saturday. It is too good to throw away, so I have pinned it to the board by the library steps. If it belongs to your child, come and claim it, and tell them it made my day.",
+      "author": "Priya Nair",
+      "createdAt": "2026-11-16T12:15:00",
+      "candles": 11,
+      "kind": null,
+      "category": null,
+      "replies": []
+    },
+    {
+      "id": "sc-101",
+      "boardId": "seance-circle",
+      "kind": "offer",
+      "category": "fix",
+      "author": "Henry Marsh",
+      "title": "I can fix a dripping tap — retired plumber, free on Saturdays",
+      "body": "Thirty years fixing taps, washers, and ballcocks, and I still keep the toolbox by the door. If your tap drips or your toilet runs all night, bring the make and model if you know it and we will sort it together. No charge, but I never say no to a slice of cake.",
+      "candles": 14,
+      "createdAt": "2026-11-12T10:00:00",
+      "replies": [
+        {
+          "id": "sc-101-r1",
+          "author": "Ruth Okafor",
+          "body": "Henry fixed our kitchen tap in half an hour last spring. The cake is worth it.",
+          "createdAt": "2026-11-12T12:40:00"
+        }
+      ]
+    },
+    {
+      "id": "sc-102",
+      "boardId": "seance-circle",
+      "kind": "offer",
+      "category": "borrow",
+      "author": "Rosa Delgado",
+      "title": "Tall ladder and wheelbarrow to lend",
+      "body": "I have a sturdy extension ladder and a wheelbarrow with two good wheels sitting in the shed. Borrow either for a day or two, just knock and ask. I am usually home after four, and I only ask that you bring them back in one piece.",
+      "candles": 11,
+      "createdAt": "2026-11-11T15:30:00",
+      "replies": []
+    },
+    {
+      "id": "sc-103",
+      "boardId": "seance-circle",
+      "kind": "offer",
+      "category": "ride",
+      "author": "Sam Osei",
+      "title": "Driving to town Tuesday mornings — two spare seats",
+      "body": "I drive into town every Tuesday around eight for the market run, and there are usually two spare seats. If you need a lift to the clinic or the shops, just say the word the night before. No need to share fuel, but good conversation is always welcome.",
+      "candles": 9,
+      "createdAt": "2026-11-13T08:20:00",
+      "replies": [
+        {
+          "id": "sc-103-r1",
+          "author": "Ada Lindqvist",
+          "body": "Rode with Sam last Tuesday. On time, good music, and he waited while I did the shopping.",
+          "createdAt": "2026-11-13T19:10:00"
+        }
+      ]
+    },
+    {
+      "id": "sc-104",
+      "boardId": "seance-circle",
+      "kind": "offer",
+      "category": "company",
+      "author": "Bea Kowalski",
+      "title": "Evening walks around the green, all paces welcome",
+      "body": "I walk a slow loop around the green every evening at seven, whatever the weather. If you would like company, come along — we go at the slowest pace in the group and nobody gets left behind. Dogs, grandchildren, and quiet walkers all welcome.",
+      "candles": 16,
+      "createdAt": "2026-11-14T18:05:00",
+      "replies": []
+    },
+    {
+      "id": "sc-105",
+      "boardId": "seance-circle",
+      "kind": "offer",
+      "category": "skill",
+      "author": "Ellis Grant",
+      "title": "I can teach hemming and basic mending",
+      "body": "I learned to sew from my grandmother and I still mend everything I own. If your trousers are too long or a seam has given up, bring them round on a Sunday afternoon and I will show you how to fix them yourself. Needle, thread, and patience provided.",
+      "candles": 13,
+      "createdAt": "2026-11-15T11:00:00",
+      "replies": []
+    }
+  ],
+  "version": 1
+}
