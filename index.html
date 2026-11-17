@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Afterlife BBS — a slow social bulletin board for one small community. No algorithms, no infinite scroll, no ads, no follower counts.">
+<meta name="theme-color" content="#0a0f0a">
+<title>Afterlife BBS</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%230a0f0a'/%3E%3Cpath d='M32 12c4 8 10 12 10 20a10 10 0 1 1-20 0c0-8 6-12 10-20z' fill='%2339ff6a'/%3E%3Crect x='28' y='44' width='8' height='6' fill='%23ffb000'/%3E%3Crect x='24' y='52' width='16' height='4' fill='%23ffb000'/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to the board</a>
+
+<!-- Dial-up intro overlay -->
+<div id="dialup" class="dialup" role="dialog" aria-modal="true" aria-labelledby="dialup-title" hidden>
+  <div class="dialup-box">
+    <pre class="ascii-art" aria-hidden="true">
+ █████╗ ███████╗████████╗███████╗██████╗ ██╗     ██╗███████╗███████╗
+██╔══██╗██╔════╝╚══██╔══╝██╔════╝██╔══██╗██║     ██║██╔════╝██╔════╝
+███████║█████╗     ██║   █████╗  ██████╔╝██║     ██║█████╗  █████╗
+██╔══██║██╔══╝     ██║   ██╔══╝  ██╔══██╗██║     ██║██╔══╝  ██╔══╝
+██║  ██║██║        ██║   ███████╗██║  ██║███████╗██║██║     ███████╗
+╚═╝  ╚═╝╚═╝        ╚═╝   ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝╚═╝     ╚══════╝
+    </pre>
+    <h1 id="dialup-title">AFTERLIFE BBS</h1>
+    <p id="dialup-sub" class="dialup-sub">Hollow Creek &middot; est. 1994 &middot; resurrected 2026</p>
+    <ol id="dialup-log" class="dialup-log" aria-live="polite" aria-label="Modem handshake log"></ol>
+    <p id="dialup-status" class="dialup-status" aria-live="polite">Press DIAL IN to connect.</p>
+    <div class="dialup-actions">
+      <button id="dialup-connect" type="button" class="btn btn-primary">☎ Dial in</button>
+      <button id="dialup-quiet" type="button" class="btn">Enter quietly</button>
+      <button id="dialup-skip" type="button" class="btn btn-ghost">Skip intro</button>
+    </div>
+    <p class="dialup-note">Sound is synthesized live with WebAudio. No audio files are loaded. You can replay this from the footer.</p>
+  </div>
+</div>
+
+<div class="scanlines" aria-hidden="true"></div>
+
+<header class="site-header">
+  <div class="header-inner">
+    <pre class="ascii-art ascii-small" aria-hidden="true">
+ █████╗ ███████╗████████╗███████╗██████╗ ██╗     ██╗███████╗███████╗
+██╔══██╗██╔════╝╚══██╔══╝██╔════╝██╔══██╗██║     ██║██╔════╝██╔════╝
+███████║█████╗     ██║   █████╗  ██████╔╝██║     ██║█████╗  █████╗
+██╔══██║██╔══╝     ██║   ██╔══╝  ██╔══██╗██║     ██║██╔══╝  ██╔══╝
+██║  ██║██║        ██║   ███████╗██║  ██║███████╗██║██║     ███████╗
+╚═╝  ╚═╝╚═╝        ╚═╝   ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝╚═╝     ╚══════╝
+    </pre>
+    <p class="site-tagline"><span id="typewriter" data-full="A slow bulletin board for one small community. No algorithms. No ads. No follower counts." aria-label="A slow bulletin board for one small community. No algorithms. No ads. No follower counts.">A slow bulletin board for one small community. No algorithms. No ads. No follower counts.</span><span class="caret" aria-hidden="true">▌</span></p>
+    <nav class="top-nav" aria-label="Board navigation">
+      <a href="#/" id="nav-home" class="nav-link">⌂ All boards</a>
+      <span class="nav-sep" aria-hidden="true">·</span>
+      <button id="nav-export" type="button" class="nav-link nav-btn">⬇ Export board (JSON)</button>
+      <span class="nav-sep" aria-hidden="true">·</span>
+      <button id="nav-import" type="button" class="nav-link nav-btn">⬆ Import board (JSON)</button>
+      <input type="file" id="import-file" accept="application/json,.json" hidden aria-label="Choose a board JSON file to import">
+    </nav>
+  </div>
+</header>
+
+<div id="rest-banner" class="rest-banner" role="status" hidden>
+  🌙 The board is resting (00:00–06:00 local time). You can read everything, but new posts and replies are paused until morning. The neighbours need their sleep too.
+</div>
+
+<main id="main" class="main" tabindex="-1">
+  <section id="view-home" class="view" aria-labelledby="home-heading">
+    <h2 id="home-heading">Choose your community</h2>
+    <p class="lede">Two demo boards are already open — a small town and one apartment building. Or start your own in five minutes.</p>
+    <ul id="community-list" class="community-list"></ul>
+
+    <h3 id="boards-heading">Boards on <span id="active-community-name">Hollow Creek</span></h3>
+    <p class="lede">Five boards. One community. Read at your own pace — the board ends when the posts end.</p>
+    <ul id="board-list" class="board-list"></ul>
+
+    <section class="kit" aria-labelledby="kit-heading">
+      <h3 id="kit-heading">🕯️ Start your own board</h3>
+      <p>Any apartment building, dorm, club, class, or small town can open a board in about five minutes. No account, no server, no cost — your board lives in your browser, and you share it with one exported file.</p>
+      <form id="kit-form" class="post-form" novalidate>
+        <div class="field">
+          <label for="kit-name">Your community's name <span aria-hidden="true">*</span></label>
+          <input id="kit-name" name="name" type="text" maxlength="60" required aria-describedby="kit-name-hint" placeholder="e.g. The Marlowe House, Room 204, Chess Club">
+          <p id="kit-name-hint" class="hint">Required, up to 60 characters.</p>
+        </div>
+        <div class="field">
+          <label for="kit-tagline">One line about it <span class="hint">(optional)</span></label>
+          <input id="kit-tagline" name="tagline" type="text" maxlength="120" placeholder="e.g. One apartment building, 48 flats.">
+        </div>
+        <fieldset class="kit-boards">
+          <legend>Boards to include</legend>
+          <label class="setting"><input type="checkbox" name="kit-boards" value="town-square" checked> 🌳 Town Square</label>
+          <label class="setting"><input type="checkbox" name="kit-boards" value="seance-circle" checked> 🕯️ Séance Circle</label>
+          <label class="setting"><input type="checkbox" name="kit-boards" value="the-library" checked> 📚 The Library</label>
+          <label class="setting"><input type="checkbox" name="kit-boards" value="workshop" checked> 🔧 Workshop</label>
+          <label class="setting"><input type="checkbox" name="kit-boards" value="lost-and-found" checked> 🧤 Lost &amp; Found</label>
+        </fieldset>
+        <p id="kit-errors" class="form-errors" role="alert" hidden></p>
+        <button type="submit" class="btn btn-primary">🕯️ Open my board</button>
+      </form>
+    </section>
+
+    <aside class="house-rules" aria-labelledby="rules-heading">
+      <h3 id="rules-heading">House rules</h3>
+      <ol>
+        <li>Ten posts per page. When you reach the end, the board says so — then go for a walk.</li>
+        <li>One candle per neighbour per post. Light it if a post warmed the room; take it back if you change your mind.</li>
+        <li>From midnight to 6am the board rests. Read all you like; posting waits for morning.</li>
+        <li>Be a neighbour first. No follower counts, no ads, no ranking. Newest first, always.</li>
+        <li>Your board lives in your browser. Export it any time and take it with you.</li>
+      </ol>
+    </aside>
+  </section>
+
+  <section id="view-board" class="view" aria-labelledby="board-heading" hidden>
+    <p><a href="#/" class="back-link">← All boards</a></p>
+    <h2 id="board-heading"></h2>
+    <p id="board-tagline" class="lede"></p>
+    <div id="seance-help" class="seance-help" hidden>
+      <h3>How the Séance Circle works</h3>
+      <p>Post a request and pick a category. The board looks through past offers from your neighbours and shows you who might be able to help. All matching happens on your own device — nothing leaves this browser.</p>
+    </div>
+    <div id="match-card" class="match-card" aria-live="polite" hidden></div>
+
+    <form id="post-form" class="post-form" novalidate>
+      <h3>Pin a new note</h3>
+      <div class="field">
+        <label for="post-author">Your name <span class="hint">(shown on the note)</span></label>
+        <input id="post-author" name="author" type="text" maxlength="40" autocomplete="nickname" placeholder="e.g. Marla T.">
+      </div>
+      <div class="field">
+        <label for="post-title">Title <span aria-hidden="true">*</span></label>
+        <input id="post-title" name="title" type="text" maxlength="120" required aria-describedby="post-title-hint" placeholder="Keep it short — one line on the board">
+        <p id="post-title-hint" class="hint">Required, up to 120 characters.</p>
+      </div>
+      <div class="field">
+        <label for="post-body">Message <span aria-hidden="true">*</span></label>
+        <textarea id="post-body" name="body" rows="5" maxlength="2000" required aria-describedby="post-body-hint" placeholder="Write it like you would pin it to a notice board."></textarea>
+        <p id="post-body-hint" class="hint">Required, up to 2000 characters.</p>
+      </div>
+      <div id="seance-fields" class="seance-fields" hidden>
+        <div class="field">
+          <label for="post-kind">Is this a request or an offer?</label>
+          <select id="post-kind" name="kind">
+            <option value="request">Request — I need a hand</option>
+            <option value="offer">Offer — I can help</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="post-category">Category</label>
+          <select id="post-category" name="category">
+            <option value="fix">Fix something</option>
+            <option value="borrow">Borrow something</option>
+            <option value="ride">A ride</option>
+            <option value="company">Company</option>
+            <option value="skill">A skill</option>
+          </select>
+        </div>
+      </div>
+      <p id="post-errors" class="form-errors" role="alert" hidden></p>
+      <p id="post-resting-note" class="resting-note" hidden>The board is resting (00:00–06:00). Posting opens again at 6am.</p>
+      <button id="post-submit" type="submit" class="btn btn-primary">📌 Pin it to the board</button>
+    </form>
+
+    <h3 class="posts-heading">Notes on this board</h3>
+    <ul id="post-list" class="post-list"></ul>
+    <p id="empty-board" class="empty-note" hidden>No notes pinned here yet. Yours could be the first — after 6am, if it is night.</p>
+    <nav class="pagination" aria-label="Post pages">
+      <button id="page-prev" type="button" class="btn">← Newer</button>
+      <span id="page-info" class="page-info" aria-live="polite"></span>
+      <button id="page-next" type="button" class="btn">Older →</button>
+    </nav>
+    <p id="end-of-board" class="end-note" hidden>✦ You have read all the notes on this board. Go for a walk. ✦</p>
+  </section>
+
+  <section id="view-post" class="view" aria-labelledby="post-detail-title" hidden>
+    <p><a href="#/" id="post-back-link" class="back-link">← Back to the board</a></p>
+    <article id="post-detail" class="post-detail" aria-labelledby="post-detail-title">
+      <h2 id="post-detail-title"></h2>
+      <p class="post-meta"><span id="post-detail-author"></span> · <time id="post-detail-time"></time></p>
+      <p id="post-detail-body" class="post-body"></p>
+      <p id="post-detail-category" class="post-category" hidden></p>
+      <button id="candle-btn" type="button" class="btn candle-btn" aria-pressed="false" aria-label="Light a candle for this post">🕯️ Light a candle (<span id="candle-count">0</span>)</button>
+    </article>
+    <h3>Replies</h3>
+    <ul id="reply-list" class="reply-list"></ul>
+    <p id="empty-replies" class="empty-note" hidden>No replies yet.</p>
+    <form id="reply-form" class="post-form" novalidate>
+      <h3>Add a reply</h3>
+      <div class="field">
+        <label for="reply-author">Your name</label>
+        <input id="reply-author" name="author" type="text" maxlength="40" autocomplete="nickname" placeholder="e.g. Marla T.">
+      </div>
+      <div class="field">
+        <label for="reply-body">Reply <span aria-hidden="true">*</span></label>
+        <textarea id="reply-body" name="body" rows="4" maxlength="2000" required aria-describedby="reply-body-hint" placeholder="Say it like a neighbour."></textarea>
+        <p id="reply-body-hint" class="hint">Required, up to 2000 characters.</p>
+      </div>
+      <p id="reply-errors" class="form-errors" role="alert" hidden></p>
+      <p id="reply-resting-note" class="resting-note" hidden>The board is resting (00:00–06:00). Replies open again at 6am.</p>
+      <button id="reply-submit" type="submit" class="btn btn-primary">↩ Post reply</button>
+    </form>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <section class="settings" aria-labelledby="settings-heading">
+      <h2 id="settings-heading">Display &amp; sound</h2>
+      <label class="setting"><input type="checkbox" id="set-reduce-motion"> Reduce motion</label>
+      <label class="setting"><input type="checkbox" id="set-high-contrast"> High contrast</label>
+      <label class="setting"><input type="checkbox" id="set-sound" checked> Dial-up sound</label>
+      <label class="setting"><input type="checkbox" id="set-typewriter" checked> Typewriter effect</label>
+      <button id="replay-dialup" type="button" class="btn btn-ghost">☎ Replay dial-up intro</button>
+    </section>
+    <p class="footer-note">Afterlife BBS · <span id="footer-community">Hollow Creek</span> · Built 2026 for Kiroween 2026 (Resurrection). All data stays in your browser — nothing is sent anywhere. <button id="reset-board" type="button" class="link-btn">Reset the board to the seed notes</button></p>
+    <p class="footer-note">No ads. No follower counts. No algorithms. Just neighbours.</p>
+  </div>
+</footer>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
