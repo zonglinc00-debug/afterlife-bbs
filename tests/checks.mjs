@@ -15,6 +15,8 @@ import {
   toggleCandle,
   findHelpers,
   buildDigest,
+  rebaseSeedDates,
+  plural,
   exportState,
   parseImportedState,
   createCommunity,
@@ -427,6 +429,52 @@ check("digest: empty board digests to empty sections, never invented content", (
   assertEqual(d.today, [], "empty board: today must be empty");
   assertEqual(d.unanswered, [], "empty board: unanswered must be empty");
   assertEqual(d.warmed, [], "empty board: warmed must be empty");
+});
+
+// --- 11. seed date anchoring (REQ-34) ---------------------------------------
+check("rebase: newest seed post lands on today, gaps between posts preserved", () => {
+  const now = new Date(2026, 10, 17, 15, 30); // Mon Nov 17 2026, local
+  const posts = [
+    fakePost({ createdAt: new Date(2026, 10, 15, 9, 0).toISOString() }),
+    fakePost({ createdAt: new Date(2026, 10, 16, 18, 30).toISOString() }),
+    fakePost({ createdAt: new Date(2026, 10, 10, 12, 0).toISOString() }),
+  ];
+  const out = rebaseSeedDates(posts, now);
+  const days = out.map((p) => new Date(p.createdAt).toDateString());
+  assert(days.includes(new Date(2026, 10, 17).toDateString()), `newest must land today: ${days.join(", ")}`);
+  const sorted = [...out].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  const dayOf = (iso) => { const d = new Date(iso); d.setHours(0, 0, 0, 0); return d.getTime(); };
+  const gapDays = (dayOf(sorted[2].createdAt) - dayOf(sorted[0].createdAt)) / 86400000;
+  assertEqual(gapDays, 6, `6-day gap between oldest and newest must survive: got ${gapDays}`);
+  assertEqual(new Date(sorted[1].createdAt).getDate(), 16, "middle post keeps its relative day");
+  // And the digest then really has "today" content.
+  const d = buildDigest(out, now);
+  assert(d.today.length === 1, `rebased digest must show 1 post today, got ${d.today.length}`);
+});
+
+check("rebase: no shift when the newest post is already today; replies shift with their post", () => {
+  const now = new Date(2026, 10, 17, 15, 30);
+  const todayPost = fakePost({ createdAt: new Date(2026, 10, 17, 8, 0).toISOString() });
+  assert(rebaseSeedDates([todayPost], now)[0] === todayPost, "already-today must return the input untouched");
+  const withReply = fakePost({
+    createdAt: new Date(2026, 10, 15, 9, 0).toISOString(),
+    replies: [{ id: "r1", author: "A", body: "hi", createdAt: new Date(2026, 10, 15, 10, 0).toISOString() }],
+  });
+  const out = rebaseSeedDates([withReply], now);
+  assertEqual(new Date(out[0].replies[0].createdAt).getDate(), 17, "reply must shift to today with its post");
+  assertEqual(new Date(out[0].replies[0].createdAt).getHours(), 10, "reply keeps its time of day");
+  assertEqual(withReply.replies[0].createdAt, new Date(2026, 10, 15, 10, 0).toISOString(), "input must never be mutated");
+  assertEqual(rebaseSeedDates([], now), [], "empty list stays empty");
+});
+
+// --- 12. pluralisation (REQ-38) --------------------------------------------
+check("plural: 1 note, 2 notes, 0 notes — never '1 notes'", () => {
+  assertEqual(plural(1, "note", "notes"), "1 note");
+  assertEqual(plural(2, "note", "notes"), "2 notes");
+  assertEqual(plural(0, "note", "notes"), "0 notes");
+  assertEqual(plural(1, "candle", "candles"), "1 candle");
+  assertEqual(plural(1, "reply", "replies"), "1 reply");
+  assertEqual(plural(3, "reply", "replies"), "3 replies");
 });
 
 // --- summary ------------------------------------------------------------------

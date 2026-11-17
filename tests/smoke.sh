@@ -43,7 +43,7 @@ check "/app.js" "toggleCandle"
 check "/data/seed.json" "town-square"
 check "/data/seed-marlowe.json" "Marlowe House"
 check "/manifest.json" "Afterlife BBS"
-check "/sw.js" "afterlife-bbs-v1"
+check "/sw.js" "afterlife-bbs-v2"
 check "/favicon.svg" "<svg"
 
 if [ "${FAIL}" -ne 0 ]; then
